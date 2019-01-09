@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Copyright (c) 2019 Anton Semjonov
+# Licensed under the MIT License
+
 from datetime import datetime
 
 # set with formatted dates and capacity to check if desired number of
