@@ -10,7 +10,7 @@ class bucket:
         self.capacity = capacity
         self.format = format
 
-    # try to add date to buckets, returns True if there was capacity in any of them
+    # try to add formatted date to bucket, returns True if there was capacity left
     def add(self, date):
         if self.capacity > 0:
             element = date.strftime(self.format)
@@ -34,7 +34,7 @@ class sieve:
             bucket("%Y", years),
         ]
 
-    # try to add a date, returns True if there was capacity, False if sieved out
+    # try to add a date, returns True if there was capacity in any bucket, False if sieved out
     def add(self, date):
         return True in [b.add(date) for b in self.buckets]
 
