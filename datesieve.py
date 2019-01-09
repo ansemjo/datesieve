@@ -71,6 +71,7 @@ if __name__ == "__main__":
     buckets.add_argument('--years', help='number of years to keep', type=int, metavar='int', default=0)
 
     parser.add_argument('--strptime', help='format to parse date, otherwise fuzzy with dateutil', metavar='format')
+    parser.add_argument('--resub', help='apply regular expression substitution before parsing', nargs=2, metavar=('pat', 'repl'))
     parser.add_argument('--sort', help='read all lines and sort by date first', action='store_true')
     parser.add_argument('--inclusive', help='show included elements instead of sieved-out ones', action='store_true')
 
@@ -80,14 +81,35 @@ if __name__ == "__main__":
     if args.strptime is None:
         import dateutil.parser
         parse = lambda s: dateutil.parser.parse(s, fuzzy=True)
+    elif args.strptime == '%s':
+        # special case for unix epoch
+        parse = lambda s: datetime.fromtimestamp(int(s))
     else:
         parse = lambda s: datetime.strptime(s, args.strptime)
 
-    # simple instantiated class to hold original line and parsed date
+    # compile substitution pattern ahead of time if given
+    if args.resub:
+        import re
+        pattern = re.compile(args.resub[0])
+
+    # instantiated class to hold original line and parsed date
     class dateline:
         def __init__(self, line):
+
+            # save original line
             self.line = line.rstrip('\n')
-            self.date = parse(line)
+
+            # apply substitution before attempting to parse
+            if args.resub:
+                line = pattern.sub(args.resub[1], line)
+
+            # try to parse line for date
+            try:
+                self.date = parse(line)
+            except ValueError as e:
+                print(str(e), file=sys.stderr)
+                print("couldn't parse date, try specifying format with --strptime or applying a substitution with --resub", file=sys.stderr)
+                sys.exit(1)
 
     # whether to read all lines and sort or use piped line-by-line operation
     if args.sort:
