@@ -23,12 +23,24 @@ class bucket:
                 return True
         return False
 
+# simple counter bucket with almost the same interface
+class counterbucket:
+    def __init__(self, capacity):
+        self.capacity = capacity
+
+    def add(self, any):
+        if self.capacity > 0:
+            self.capacity -= 1
+            return True
+        return False
+
 # sieve a number of dates with timespan buckets
 class sieve:
 
     # initialize a sieve with timespan buckets with given capacities
-    def __init__(self, minutes=0, hours=0, days=0, weeks=0, months=0, years=0, **ignoredargs):
+    def __init__(self, minimum=0, minutes=0, hours=0, days=0, weeks=0, months=0, years=0, **ignoredargs):
         self.buckets = [
+            counterbucket(minimum),
             bucket("%Y%m%d%H%M", minutes),
             bucket("%Y%m%d%H", hours),
             bucket("%Y%m%d", days),
@@ -43,10 +55,10 @@ class sieve:
 
     # all-in-one to directly sieve a list of elements and return result
     @staticmethod
-    def sieve(elements, key=lambda e: e, inclusive=True, minutes=0, hours=0, days=0, weeks=0, months=0, years=0, **ignoredargs):
+    def sieve(elements, key=lambda e: e, inclusive=True, minimum=0, minutes=0, hours=0, days=0, weeks=0, months=0, years=0, **ignoredargs):
 
         # init sieve
-        s = sieve(minutes, hours, days, weeks, months, years)
+        s = sieve(minimum, minutes, hours, days, weeks, months, years)
 
         # copy and sort elements
         elements = list(elements)
@@ -66,6 +78,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     buckets = parser.add_argument_group('timespan buckets')
+    buckets.add_argument('--minimum', help='minimum number to keep', type=int, metavar='int', default=0)
     buckets.add_argument('--minutes', help='number of minutes to keep', type=int, metavar='int', default=0)
     buckets.add_argument('--hours', help='number of hours to keep', type=int, metavar='int', default=0)
     buckets.add_argument('--days', help='number of days to keep', type=int, metavar='int', default=0)
