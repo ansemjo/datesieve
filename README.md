@@ -5,6 +5,14 @@ only keep specific entries according to retention policies. It is inspired by th
 [restic](https://restic.net/) handles its
 [snapshot policies](https://github.com/restic/restic/blob/master/internal/restic/snapshot_policy.go).
 
+## install
+
+Install with `pip` directly from GitHub:
+
+```
+pip install git+https://github.com/ansemjo/datesieve
+```
+
 ## synopsis
 
 You give it a list of date objects and specify how many hourly, daily, weekly, ... entries you want
