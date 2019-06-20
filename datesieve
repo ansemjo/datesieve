@@ -112,8 +112,8 @@ if __name__ == "__main__":
     class dateline:
         def __init__(self, line):
 
-            # save original line
-            self.line = line.rstrip('\n')
+            # strip trailing newline and save original line
+            line = self.line = line.rstrip('\n')
 
             # apply substitution before attempting to parse
             if args.resub:
